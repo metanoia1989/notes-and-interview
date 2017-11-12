@@ -1,0 +1,8 @@
+Vim中如何快速进行光标移动？ http://harttle.com/2015/11/07/vim-cursor.html  
+
+
+
+
+技巧摘录
+
+侧边栏切换 Ctrl+k, Ctrl+b
