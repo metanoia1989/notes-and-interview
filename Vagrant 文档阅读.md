@@ -328,4 +328,109 @@ end
 
 # Multi-Machine
 Vagrant is able to define and control multiple guest machines per Vagrantfile. This is known as a "multi-machine" environment.
+- Accurately modeling a multi-server production topology, such as separating a web and database server.
+- Modeling a distributed system and how they interact with each other.
+- Testing an interface, such as an API to a service component.
+- Disaster-case testing: machines dying, network partitions, slow networks, inconsistent world views, etc.
 
+Multiple machines are defined within the same project Vagrantfile using the config.vm.define method call.
+```ruby
+Vagrant.configure("2") do |config|
+  config.vm.provision "shell", inline: "echo Hello"
+
+  config.vm.define "web" do |web|
+    web.vm.box = "apache"
+  end
+
+  config.vm.define "db" do |db|
+    db.vm.box = "mysql"
+  end
+end
+```
+
+# Synced Folders
+Synced folders enable Vagrant to sync a folder on the host machine to the guest machine, allowing you to continue working on your project's files on your host machine, but use the resources in the guest machine to compile or run your project.
+
+By default, Vagrant will share your project directory (the directory with the Vagrantfile) to /vagrant.
+
+## Basic Usage
+Synced folders are configured within your Vagrantfile using the config.vm.synced_folder method. 
+```ruby
+Vagrant.configure("2") do |config|
+  # other config here
+
+  config.vm.synced_folder "src/", "/srv/website"
+end
+```
+The first parameter is a path to a directory on the host machine. 
+The second parameter must be an absolute path of where to share the folder within the guest machine.This folder will be created (recursively, if it must) if it does not exist.
+
+Options, You may also specify additional optional parameters when configuring synced folders. 
+note the owner/group example supplies two additional options separated by commas.
+- create (boolean) - If true, the host path will be created if it does not exist. Defaults to false.
+- disabled (boolean) - If true, this synced folder will be disabled and will not be setup. This can be used to disable a previously defined synced folder or to conditionally disable a definition based on some external factor.
+- group (string) - The group that will own the synced folder. By default this will be the SSH user. Some synced folder types do not support modifying the group.
+- mount_options (array) - A list of additional mount options to pass to the mount command.
+- owner (string) - The user who should be the owner of this synced folder. By default this will be the SSH user. Some synced folder types do not support modifying the owner.
+- type (string) - The type of synced folder. If this is not specified, Vagrant will automatically choose the best synced folder option for your environment. Otherwise, you can specify a specific type such as "nfs".
+- id (string) - The name for the mount point of this synced folder in the guest machine. This shows up when you run mount in the guest machine.
+
+Disabling, Synced folders can be disabled by adding the disabled option to any definition
+```ruby
+Vagrant.configure("2") do |config|
+  config.vm.synced_folder "src/", "/srv/website", disabled: true
+end
+```
+
+Modifying the Owner/Group
+By default, Vagrant mounts the synced folders with the owner/group set to the SSH user. Sometimes it is preferable to mount folders with a different owner and group. It is possible to set these options:
+```ruby
+config.vm.synced_folder "src/", "/srv/website",
+  owner: "root", group: "root"
+
+# NOTE: Owner and group IDs defined within mount_options will have precedence over the owner and group options.
+config.vm.synced_folder ".", "/vagrant", owner: "vagrant",
+  group: "vagrant", mount_options: ["uid=1234", "gid=1234"]
+```
+
+Symbolic Links
+
+
+# Creating a Base Box
+Packer，自动化的box构建工具
+
+Before installing the guest additions, you will need the linux kernel headers and the basic developer tools. On Ubuntu, you can easily install these like so:
+> $ sudo apt-get install linux-headers-$(uname -r) build-essential dkms
+
+Where "my-virtual-machine" is replaced by the name of the virtual machine in VirtualBox to package as a base box.
+> $ vagrant package --base my-virtual-machine
+
+vagrant package [name|id]
+--base NAME - Instead of packaging a VirtualBox machine that Vagrant manages, this will package a VirtualBox machine that VirtualBox manages. NAME should be the name or UUID of the machine from the VirtualBox GUI. Currently this option is only available for VirtualBox.
+--output NAME - The resulting package will be saved as NAME. By default, it will be saved as package.box.
+--vagrantfile FILE - Packages a Vagrantfile with the box, that is loaded as part of the Vagrantfile load order when the resulting box is used.
+
+A VirtualBox base box is an archive of the resulting files of exporting a VirtualBox virtual machine. Here is an example of what is contained in such a box:
+```sh
+$ tree
+.
+|-- Vagrantfile
+|-- box-disk1.vmdk
+|-- box.ovf
+|-- metadata.json
+```
+
+## Default User Settings
+"vagrant" User
+Default, it is a general convention to set the password for the "vagrant" user to "vagrant". 
+Place the public key into the ~/.ssh/authorized_keys file for the "vagrant" user. Note that OpenSSH is very picky about file permissions. Therefore, make sure that ~/.ssh has 0700 permissions and the authorized keys file has 0600 permissions.
+
+Root Password: "vagrant"
+Vagrant does not actually use or expect any root password. However, having a generally well known root password makes it easier for the general public to modify the machine if needed.
+
+Password-less Sudo
+This is important!. Many aspects of Vagrant expect the default SSH user to have passwordless sudo configured. This lets Vagrant configure networks, mount synced folders, install software, and more.
+
+
+This can be done with the following line at the end of the configuration file:
+vagrant ALL=(ALL) NOPASSWD: ALL

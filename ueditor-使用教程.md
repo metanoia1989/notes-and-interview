@@ -33,10 +33,12 @@ UE.getEditor('editor').ready(function() {
 
 # 初步使用
 ```html
-<!-- 加载编辑器的容器 -->
-<script id="container" name="content" type="text/plain">
-    这里写你的初始化内容
-</script>
+<form action="server.php" method="post">
+    <!-- 加载编辑器的容器 -->
+    <script id="container" name="content" type="text/plain">
+        这里写你的初始化内容
+    </script>
+</form>
 <!-- 配置文件 -->
 <script type="text/javascript" src="ueditor.config.js"></script>
 <!-- 编辑器源码文件 -->
@@ -250,19 +252,155 @@ toolbars: [
 - _example: ueditor的使用例子
 - _parse: ueditor.parse.js的源码,parse的用途具体看内容展示文档
 - _src: ueditor.all.js的源码,打包方法看grunt打包文档
- - _src\core: ueditor核心代码
- - _src\plugins: 插件文件
- - _src\ui: ui相关文件
- - _src\adapter: 桥接层文件,对接ueditor核心和ui代码
+    - _src\core: ueditor核心代码
+    - _src\plugins: 插件文件
+    - _src\ui: ui相关文件
+    - _src\adapter: 桥接层文件,对接ueditor核心和ui代码
 - php: php后台文件的目录
- - php\config.json: 后端配置文件,所有前后端相关配置项,都放在这里
- - php\controller.php: 接收所有请求的接口文件,通过它判断action参数,分发具体任务给其他php文件
- - php\action_crawler: 撞去远程文件的代码,转存文件使用
- - php\action_upload: 上传图片、附件、视频的处理代码
- - php\action_list: 列出在线的图片或者是附件
- - php\Upload.class.php: 上传文件使用的类
+    - php\config.json: 后端配置文件,所有前后端相关配置项,都放在这里
+    - php\controller.php: 接收所有请求的接口文件,通过它判断action参数,分发具体任务给其他php文件
+    - php\action_crawler: 撞去远程文件的代码,转存文件使用
+    - php\action_upload: 上传图片、附件、视频的处理代码
+    - php\action_list: 列出在线的图片或者是附件
+    - php\Upload.class.php: 上传文件使用的类
 - changelog.md: 各版本的ueditor更新记录
 - Gruntfile.js: grunt执行的任务文件,用来把源码包打包成部署版本,打包方法看grunt打包文档
 - LICENSE: 开源协议说明证书,ueditor使用MIT开源协议
 - ueditor.config.js: 前端配置文件
 - ueditor.parse.js: 还没合并时使用的parse文件,会自动加载_parse里面的文件
+
+# 编辑内容展示
+随着编辑器产出内容的增加和复杂化，比如图表展示，代码高亮，自定义的列表标号等等，如果都在最终产出的编辑数据中处理，那势必会导致产出数据带有冗余内容，而且也很大程度上硬编码了展示时定制效果。基于这些问题，uparse产生了。
+
+uparse 基于js的实现机制，在展示页面中，对 UEditor 的产出的编辑数据，进行解析和转换，以呈现不同的效果。为后边的多端（移动端和pc端）展示打下基础。
+
+uparse 它会根据内容展示内容，动态的在你的展示页中加入css代码,比如你的编辑数据中有表格，那就会加入一些表格的css样式,如果有图表数据，会调用相关的js插件，解析数据成为图表等。
+
+1. 在下载包中找到ueditor.parse.js或者uparse.js. 完整版本的包中，ueditor.parse.js是没有打包编译的，需要进行编译。从1.3.5开始，uparse做了重构，将原来的一个文件拆解成了多个插件形式的js,为了适应越来越多的功能需求。
+parse.js是核心文件，定了插件的管理机制和一些快捷方法。
+
+其他文件代表的一种数据解析功能，比如insertcode.js是针对的数据里边的代码进行展示时的解析等等。
+
+uparse是需要依赖ueditor项目中的third-party中相关的第三方库的。
+2. 根据你的路径加载uparse.js
+```html
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <script src="../ueditor.parse.js"></script>
+    <title></title>
+</head>
+```
+3. 当加载了uparse.js后，就可以调用uParse这个函数，执行内容解析了。
+cssSelector 告诉uParse将编辑数据放到的容器，支持3种格式,tag,id,class，options是个json对象。
+```js
+//uParse的语法
+uParse(cssSelector,[options])
+//options
+{
+    rootPath: '', //ueditor所在的路径，这个要给出，让uparse能找到third-party目录
+    //因为需要引入目录下的那些js文件，当然会根据你的编辑数据，按需加载
+    liiconpath: 'http://bs.baidu.com/listicon/', //自定义列表标号图片的地址，默认是这个地址
+    listDefaultPaddingLeft: '20' //自定义列表标号与文字的横向间距
+}
+//一般只要给个rootPath就够了，其他的都可以使用默认值
+uParse('.content', {
+    rootPath: '../'
+})
+```
+```html
+<div id="content">
+    <p>dsfsdF</p>
+    <p>sdsdf</p>
+</div>
+```
+使用uparse来解析展示页中的数据的，当然你也可以给出自己针对某些标签的自定义样式，这个跟uparse是不冲突的.随着可编辑内容的丰富和复杂，展示数据也会变得越来越复杂和难以维护，而且多端展示的需求也越来越强烈。展现数据会变得需要做更多的事情。
+
+这个是解析处理页面内容，方便再显示。
+
+# 后端部署说明
+## 配置 serverUrl 参数
+UEditor 1.4.2+ 起，推荐使用统一的请求路径，在你部署好前端代码后，你需要修改 ueditor.config.js 里的 serverUrl 参数，改成 URL + 'php/controller.php'
+
+iframe中所有的表单用的都是这个地址来处理的
+```html
+<form id="edui_form_j9whjf9b" target="edui_iframe_j9whjf9b" method="POST" enctype="multipart/form-data" action="http://h5.metanoia.com/ueditor-utf8-php/php/controller.php" ><input id="edui_input_j9whjf9b" type="file" accept="image/*" name="upfile" 
+```
+
+## 检查是否正常加载后台配置项
+UEditor 1.4.2+ 起，把前后端相关的配置项都放到后端文件 php/config.json 设置，初始化时会向 serverUrl 发起获取后端配置的请求。
+你可以测试你的网站下的路径 ueditor/php/controller.php?action=config 是否正常返回了json格式的后端配置内容。
+如果这个请求出错，出现400、500等错误，编辑器上传相关的功能将不能正常使用。
+
+## 检查上传目录是否可读写
+php 版本的默认上传目录是域名根目录下的 ueditor/php/upload 文件夹，你需要检查这个文件夹是否可被 php 代码读写。
+部分服务器会限制不允许读写超出当前 php 文件所在目录的文件，这种情况需要修改上传路径 imagePathFormat 等，修改位置在 php/config.json 目录下。
+
+## 上传文件大小限制
+上传大小配置可通过 php/config.json 文件，里面的 imageMaxSize 参数值（单位为B），控制上传文件大小。当上传超出了大小会向前端包“超出大小”的错误。
+由于前端可以拿到后端配置项，也可以判断文件大小，在上传之前就可以控制超出大小的文件，并提示错误信息。
+php 服务器需要修改 php.ini 里面的上传大小限制和post表单大小限制。
+
+## 上传文件格式控制
+上传文件后缀类型限制，可通过 php/config.json 文件，里面的 imageAllowFiles 参数值，控制上传文件后缀。当上传了不在列表里的后缀名文件，会向前端报 “文件格式不允许” 的错误。
+
+## 给返回路径的添加前缀
+通过在 php/config.json 文件，配置 imageUrlPrefix 可以给返回的路径添加指定的前缀。
+
+编辑器和图片地址同域的情况下，可以直接使用后台返回的路径，不需要额外配置前缀。
+
+假如编辑器和图片不在一个域名下，需要给返回路径添加域名前缀，可以设置 imageUrlPrefix 配置项为 "http://img.domain"，这时插入编辑器的图片会是这样：`"http://img.domain/ueditor/php/upload/2014/06/06/123.jpg"`
+
+# 后端配置项说明
+前后端的配置统一写在后端(PHP版本的config在php/config.json)，编辑器实例化时，异步读取后端配置信息，覆盖到前端的配置里。
+
+配置优先级: 后端获取的配置项 > 实例化传入的配置项 > ueditor.config.js文件的配置项
+
+读取配置项: `var lang = ue.getOpt('lang');`
+
+实例化的ue对象上有以下几个方法:
+- [方法]：loadServerConfig 执行这个方法，会向后端请求config
+- [方法]：isServerConfigLoaded 判断是否已加载后端config
+- [方法]：afterConfigReady 加载后端配置项结束后会执行回调函数，假如已加载，立即执行该回调函数
+- [事件]：serverConfigLoaded 加载后端配置项结束后，会触发这个事件
+
+## 上传图片配置项
+- imageActionName {String} [默认值："uploadimage"] //执行上传图片的action名称,
+- imageFieldName {String} [默认值："upfile"] //提交的图片表单名称
+- imageMaxSize {Number} [默认值：2048000] //上传大小限制，单位B
+- imageAllowFiles {String} , //上传图片格式显示
+- imageCompressEnable {Boolean} [默认值：true] //是否压缩图片,默认是true
+- imageCompressBorder {Number} [默认值：1600] //图片压缩最长边限制
+- imageInsertAlign {String} [默认值："none"] //插入的图片浮动方式
+- imageUrlPrefix {String} [默认值：""] //图片访问路径前缀
+- imagePathFormat {String} [默认值："/ueditor/php/upload/image/{yyyy}{mm}{dd}/{time}{rand:6}"] //上传保存路径,可以自定义保存路径和文件名格式
+
+## 上传文件配置
+- fileActionName {String} [默认值："uploadfile"] //controller里,执行上传视频的action名称
+- fileFieldName {String} [默认值："upfile"] //提交的文件表单名称
+- filePathFormat {String} [默认值："/ueditor/php/upload/file/{yyyy}{mm}{dd}/{time}{rand:6}"] //上传保存路径,可以自定义保存路径和文件名格式，上传路径配置
+- fileUrlPrefix {String} [默认值：""] //文件访问路径前缀
+- fileMaxSize {Number} [默认值：51200000] //上传大小限制，单位B，默认50MB，注意修改服务器的大小限制
+- fileAllowFiles {Array}, //上传文件格式显示
+
+## 上传视频配置
+- videoActionName {String} [默认值："uploadvideo"] //执行上传视频的action名称
+- videoFieldName {String} [默认值："upfile"] //提交的视频表单名称
+- videoPathFormat {String} [默认值："/ueditor/php/upload/video/{yyyy}{mm}{dd}/{time}{rand:6}"] //上传保存路径,可以自定义保存路径和文件名格式，上传路径配置
+- videoUrlPrefix {String} [默认值：""] //视频访问路径前缀
+- videoMaxSize {Number} [默认值：102400000] //上传大小限制，单位B，默认100MB，注意修改服务器的大小限制
+- videoAllowFiles {Array}, //上传视频格式显示
+
+## 列出指定目录下的图片
+- imageManagerActionName {String} [默认值："listimage"] //执行图片管理的action名称
+- imageManagerListPath {String} [默认值："/ueditor/php/upload/image/"] //指定要列出图片的目录
+- imageManagerListSize {String} [默认值：20] //每次列出文件数量
+- imageManagerUrlPrefix {String} [默认值：""] //图片访问路径前缀
+- imageManagerInsertAlign {String} [默认值："none"] //插入的图片浮动方式
+- imageManagerAllowFiles {Array}, //列出的文件类型
+
+## 列出指定目录下的文件
+- fileManagerActionName {String} [默认值："listfile"] //执行文件管理的action名称
+- fileManagerListPath {String} [默认值："/ueditor/php/upload/file/"] //指定要列出文件的目录
+- fileManagerUrlPrefix {String} [默认值：""] //文件访问路径前缀
+- fileManagerListSize {String} [默认值：20] //每次列出文件数量
+- fileManagerAllowFiles {Array} //列出的文件类型
