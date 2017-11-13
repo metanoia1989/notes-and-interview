@@ -158,3 +158,18 @@ vim $HOME/.conkyrc
 上传速度:$alignr${upspeed wlp2s0} k/s
 ${downspeedgraph wlp2s0 324D23 77B753}
 ```
+
+# 触摸板手势
+https://bbs.deepin.org/forum.php?mod=viewthread&tid=148191&aid=45807&from=album&page=1&mobile=2
+
+# 字体渲染更改不圆润的解决方案
+
+https://bbs.deepin.org/forum.php?mod=viewthread&tid=148053&page=1&mobile=2
+
+http://m.blog.csdn.net/fungleo/article/details/78438788
+
+https://bbs.deepin.org/forum.php?mod=viewthread&tid=147987&fromguid=hot&extra=&mobile=2
+
+https://bbs.deepin.org/forum.php?mod=viewthread&tid=147485&fromguid=hot&extra=&mobile=2
+
+http://linuxbrew.sh
