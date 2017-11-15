@@ -59,3 +59,35 @@ docker-compose run --rm web rake db:migrate
 VAPID_PRIVATE_KEY=9_1kA8UJ2B9OPphSVAwioMt0wTNgnjiorUGaglh-VyA=
 VAPID_PUBLIC_KEY=BOfG0W_Rc7DKqTKI2Hyt80tNFlmY8rZraIsrQMwuaKC6GkL2KZ8Z8l0eUiO8mnVvZ-YI8irqu7J5eVc3bt8Z2Wg=
 ```
+
+## 生产部署指南
+https://github.com/tootsuite/documentation/blob/master/Running-Mastodon/Production-guide.md
+
+Email Service
+配置第三方邮件发送服务MAILGUN http://jesktop.com/2015/04/18/transactional-email-mailgun/
+
+Redirect to HTTPS on Apache https://www.namecheap.com/support/knowledgebase/article.aspx/9821/38/redirect-to-https-on-apache
+```
+# 
+RewriteEngine On 
+RewriteCond %{HTTPS} !=on 
+RewriteRule ^/?(.*) https://%{SERVER_NAME}/$1 [R,L]
+```
+重定向之后，无需在http设置反向代理了。
+```
+<VirtualHost *:80> 
+ServerName www.yourdomain.com 
+Redirect permanent / https://www.yourdomain.com/ 
+</VirtualHost>
+
+<VirtualHost _default_:443> 
+ServerName www.yourdomain.com 
+DocumentRoot /usr/local/apache2/htdocs 
+SSLEngine On 
+# ... 
+</VirtualHost>
+```
+
+https://www.digitalocean.com/community/tutorials/how-to-set-up-mod_rewrite
+https://httpd.apache.org/docs/2.4/rewrite/
+http://httpd.apache.org/docs/current/mod/mod_rewrite.html

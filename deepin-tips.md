@@ -160,7 +160,7 @@ ${downspeedgraph wlp2s0 324D23 77B753}
 ```
 
 # 触摸板手势
-https://bbs.deepin.org/forum.php?mod=viewthread&tid=148191&aid=45807&from=album&page=1&mobile=2
+https://bbs.deepin.org/forum.php?mod=viewthread&tid=148191&aid=45807
 
 # 字体渲染更改不圆润的解决方案
 
@@ -173,3 +173,12 @@ https://bbs.deepin.org/forum.php?mod=viewthread&tid=147987&fromguid=hot&extra=&m
 https://bbs.deepin.org/forum.php?mod=viewthread&tid=147485&fromguid=hot&extra=&mobile=2
 
 http://linuxbrew.sh
+
+# 一个redis桌面客户端 
+https://github.com/uniorder/kedis
+
+# flyos标题栏
+https://github.com/linuxflyos/flyos-topbar
+
+# 15.5字体变细解决
+https://bbs.deepin.org/forum.php?mod=viewthread&tid=148334&extra=
