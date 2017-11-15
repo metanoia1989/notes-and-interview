@@ -6,3 +6,5 @@ Vim中如何快速进行光标移动？ http://harttle.com/2015/11/07/vim-cursor
 技巧摘录
 
 侧边栏切换 Ctrl+k, Ctrl+b
+
+盘点：《游戏王》经典决斗最终章！王之记忆篇 http://news.17173.com/content/2016-09-19/20160919092317758_all.shtml

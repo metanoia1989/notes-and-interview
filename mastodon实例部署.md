@@ -91,3 +91,15 @@ SSLEngine On
 https://www.digitalocean.com/community/tutorials/how-to-set-up-mod_rewrite
 https://httpd.apache.org/docs/2.4/rewrite/
 http://httpd.apache.org/docs/current/mod/mod_rewrite.html
+
+apache configure https://gist.github.com/cmiles74/22cc718659fb722cb2b824cf2f747790
+
+Setting up Mastodon behind Apache is possible as well, although you will need to enable [mod_proxy_wstunnel]
+https://github.com/tootsuite/mastodon/pull/1018/files
+https://github.com/tootsuite/documentation/blob/master/Running-Mastodon/Alternatives.md#apache
+
+
+SecurityError: The operation is insecure
+在firefox、chrome中无法正常显示，但是屏蔽cookie则可以，不过屏蔽了cookie则无法登陆了。
+https://github.com/Modernizr/Modernizr/issues/1825
+
