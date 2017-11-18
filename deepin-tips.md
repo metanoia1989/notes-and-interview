@@ -177,8 +177,73 @@ http://linuxbrew.sh
 # 一个redis桌面客户端 
 https://github.com/uniorder/kedis
 
-# flyos标题栏
-https://github.com/linuxflyos/flyos-topbar
+# deepin顶部栏
+业务爱好者的 https://github.com/linuxflyos/flyos-topbar
+官方员工的开发 https://github.com/kirigayakazushin/deepin-topbar
+
+topbar PPA 
+```sh
+Append content to /etc/apt/sources.list
+deb [arch=amd64] https://packages.mkacg.com panda main
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3BBF73EE77F2FB2A
+sudo apt update && sudo apt install deepin-topbar
+```
+
+flyos-topbar 
+```
+git clone https://github.com/linuxflyos/flyos-topbar
+cd flyos-topbar
+mkdir build
+cd build
+cmake -DCMAKE_INSTALL_PREFIX=/usr ..
+make
+sudo make install
+```
+flyos要求cmake为3.8以上，而仓库的是3.7
+```
+sudo apt remove cmake
+https://cmake.org/download/ 
+chmod +x /path/to/cmake-3.6.2-Linux-x86_64.sh
+sudo /path/to/cmake-3.6.2-Linux-x86_64.sh
+sudo ln -s /opt/cmake-3.6.2-Linux-x86_64/bin/* /usr/local/bin
+```
+安装高版本cmake
+sudo apt remove cmake
+https://cmake.org/download/
+wget cmake-3.10.0-rc5-Linux-x86_64.sh
+chmod u+x cmake.sh
+./cmake.sh
+sudo ln -s /opt/cmake-3.6.2-Linux-x86_64/bin/* /usr/local/bin
+
+
+依赖问题
+xcb/xcb_ewmh.h: No such file or directory
+sudo apt install libxcb-ewmh-dev
+ xcb/xcb_icccm.h: No such file or directory
+sudo apt install libxcb-icccm4-dev
+
+xcb/composite.h: No such file or directory
+sudo apt install libxcb-composite0-dev
+
+xcb/xcb_image.h: No such file or directory
+libxcb-image0-dev/
+
+flyos-topbar/plugins/sound/soundapplet.h:12:22: fatal error: QGSettings: No such file or directory
+```
+ #include <QGSettings>
+ #include <QSettings>
+```
+locate QGSettings
+/usr/include/x86_64-linux-gnu/qt5/QGSettings
+/usr/include/x86_64-linux-gnu/qt5/QGSettings/QGSettings
+/usr/include/x86_64-linux-gnu/qt5/QGSettings/qgsettings.h
+
+In file included from /home/metanoia/Application/flyos-topbar/plugins/sound/soundapplet.cpp:1:0:
+/home/metanoia/Application/flyos-topbar/plugins/sound/soundapplet.h:12:22: fatal error: QGSettings: No such file or directory
+ \#include <QGSettings>
+                      ^
+http://www.linuxidc.com/Linux/2011-11/47379.html
+
 
 # 15.5字体变细解决
 https://bbs.deepin.org/forum.php?mod=viewthread&tid=148334&extra=
