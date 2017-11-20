@@ -27,6 +27,17 @@ Jekyll Feed 生成 RSS 源
 Jekyll Redirect From 提供页面跳转功能
 Jemoji 加入自己 Emoji 表情
 Jekyll Mentions  允许你在文章中直接“@” GitHub 或其它网站用户
+# 添加文章目录
+
+# 添加随机引语
+
+# 添加标签
+
+# 添加搜索功能 
+
 
 实用插件
 [Jekyll Compose](https://github.com/jekyll/jekyll-compose) 发布管理博文
+
+# 博客主题
+ http://einverne.github.io/ 
