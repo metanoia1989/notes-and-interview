@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <h3>v-on 監聽事件</h3>
+    <div id="app-1">
+        <base-layout>
+            <template slot="header">
+                <h1>这是页面头部</h1> 
+            </template>
+
+            <p>这是一个段落 有一些信息</p>
+            <p>另外的一些信息</p>
+
+            <template slot="other">
+            </template>
+
+            <template slot="footer">
+                <p>页面底部的一些信息</p> 
+            </template>
+        </base-layout>
+    </div> 
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+        Vue.component('base-layout', {
+            template: `
+                <div class="contaniner">
+                    <header>
+                        <slot name="header"></slot>
+                    </header>
+                    <main>
+                        <slot></slot>
+                    </main>
+                    <div>
+                        <slot name="other">这是默认的内容</slot>
+                    </div>
+                    <footer>
+                        <slot name="footer"></slot>
+                    </footer>
+                </div>
+            `,
+        });
+
+        var app1 = new Vue({
+            el: '#app-1',
+            data: {
+            },
+        }); 
+
+
+    </script>
+</body>
+</html>

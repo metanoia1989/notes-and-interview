@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <h3>注册并实例化组件</h3>
+    <div id="app-1">
+        <my-component></my-component>
+    </div> 
+
+    <h3>注册局部组件</h3>
+    <div id="app-2">
+        <span>展示一个布局组件</span> 
+        <my-second-component></my-second-component>
+    </div> 
+
+    <h3>data选项为函数，为每个组件实例返回全新的对象</h3>
+    <div id="app-3">
+        <simple-counter></simple-counter>
+        <simple-counter></simple-counter>
+        <simple-counter></simple-counter>
+    </div> 
+
+    <h3>组件用props接收数据</h3>
+    <div id="app-4">
+        <child message="hello vue component!"></child>
+    </div> 
+
+    <h3>props的命名问题</h3>
+    <div id="app-5">
+        <second-child my-message="component give name!"></second-child>
+    </div> 
+
+    <h3>动态props</h3>
+    <div id="app-6">
+        <input v-model="parentMsg">
+        <br>
+        <second-child v-bind:my-message="parentMsg"></second-child>
+    </div> 
+
+    <h3>props验证</h3>
+    <div id="app-7">
+        <check prop-c="hello"></check>
+    </div> 
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+        Vue.component('my-component', {
+            template: '<div>一个自定义的组件</div>'
+        });
+
+        var app1 = new Vue({
+            el: '#app-1',
+        }); 
+
+        var Child = {
+            template: '<div>这是一个局部组件</div>'
+        }
+        var app2 = new Vue({
+            el: '#app-2',
+            components: {
+                'my-second-component': Child,
+            }
+        }); 
+
+        var data = { counter: 0 }
+        Vue.component('simple-counter', {
+            template: '<button v-on:click="counter += 1">{{ counter }}</button>',
+            data: function () {
+                return {
+                    counter: 0
+                };
+            }
+        });
+
+        var app3 = new Vue({
+            el: '#app-3',
+        }); 
+
+        Vue.component('child', {
+            props: ['message'],
+            template: '<span>{{ message }}</span>'
+        });
+        var app4 = new Vue({
+            el: '#app-4',
+        }); 
+
+        Vue.component('second-child', {
+            props: ['myMessage'],
+            template: '<span>{{ myMessage }}</span>'
+        });
+        var app5 = new Vue({
+            el: '#app-5',
+        }); 
+
+        var app6 = new Vue({
+            el: '#app-6',
+            data: {
+                parentMsg: '信息来自父组件'
+            }
+        }); 
+
+        Vue.component('check', {
+            props: {
+                // 基础类型检测 (`null` 指允许任何类型)
+                propA: Number,
+                // 多种类型
+                propB: [String, Number],
+                // 必传且是字符串
+                propC: {
+                    type: String,
+                    required: true,
+                },
+                // 数值且有默认值
+                propD: {
+                    type: Number,
+                    default: 100,
+                },
+                // 数组/对象的默认值应当由一个工厂函数返回
+                propE: {
+                    type: Object,
+                    default: function(){
+                        return { message: 'hello'};
+                    }
+                },
+                // 自定义验证函数
+                propF: {
+                    validator: function (value) {
+                        return value > 10;
+                    }
+                }
+            },
+            template: '<div>propC: {{ propC }}</div>'
+        });
+
+        var app7 = new Vue({
+            el: '#app-7',
+        }); 
+
+    </script>
+</body>
+</html>

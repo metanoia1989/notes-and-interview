@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <h3>v-on 監聽事件</h3>
+    <div id="app-1">
+        <p>{{ total }}</p>
+        <button-counter v-on:increment="incrementTotal"></button-counter>
+        <button-counter v-on:increment="incrementTotal"></button-counter>
+    </div> 
+
+    <h3>v-on 使用载荷数据 payload</h3>
+    <div id="app-2">
+        <p v-for="msg in messages">{{ msg }}</p>
+        <button-message v-on:message="handleMessage"></button-message>
+    </div> 
+
+    <h3>动态组件</h3>
+    <div id="app-3">
+        <component :is="currentView"></component>
+    </div> 
+
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+        Vue.component('button-counter', {
+            template: '<button v-on:click="incrementCounter">{{ counter }}</button>',
+            data: function () {
+                return {
+                    counter: 0
+                }
+            },
+            methods: {
+                incrementCounter: function(){
+                    this.counter += 1;
+                    this.$emit('increment');
+                }
+            }
+        });
+
+        var app1 = new Vue({
+            el: '#app-1',
+            data: {
+                total: 0
+            },
+            methods: {
+                incrementTotal: function () {
+                    this.total += 1;
+                }
+            }
+        }); 
+
+        Vue.component('button-message', {
+            template: `<div>
+                <input type="text" v-model="message"/>
+                <button v-on:click="handleSendMessage">Send</button>
+            </div>`,
+            data: function () {
+                return {
+                    message: 'test message'
+                }
+            },
+            methods: {
+                handleSendMessage: function(){
+                    this.$emit('message', { message: this.message });
+                }
+            }
+        });
+
+        var app2 = new Vue({
+            el: '#app-2',
+            data: {
+                messages: []
+            },
+            methods: {
+                handleMessage: function (payload) {
+                    this.messages.push(payload.message);
+                }
+            }
+        }); 
+
+        var app3 = new Vue({
+            el: '#app-3',
+            data: {
+                currentView: 'home' 
+            },
+            components: {
+                home: {
+                    template: '<div>hello dynamic</div>'
+                },
+                posts: {},
+                archive: {},
+            }
+        }); 
+
+
+
+    </script>
+</body>
+</html>
